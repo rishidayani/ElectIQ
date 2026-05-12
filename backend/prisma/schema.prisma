@@ -1,0 +1,124 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String      @id @default(uuid())
+  email     String      @unique
+  password  String
+  name      String
+  role      String      @default("viewer") // viewer, analyst
+  alertRules AlertRule[]
+}
+
+model Election {
+  id              String      @id @default(uuid())
+  name            String
+  date            DateTime
+  totalSeats      Int
+  status          String      @default("pending") // pending, live, completed
+  config          String?     // JSON string for additional config
+  constituencies  Constituency[]
+  historicalResults HistoricalResult[]
+}
+
+model Party {
+  id           String      @id @default(uuid())
+  name         String
+  abbreviation String
+  colorHex     String
+  allianceId   String?
+  candidates   Candidate[]
+}
+
+model Constituency {
+  id               String      @id @default(uuid())
+  electionId       String
+  election         Election    @relation(fields: [electionId], references: [id])
+  name             String
+  state            String
+  registeredVoters Int
+  candidates       Candidate[]
+  results          Result[]
+  turnout          Turnout?
+  historicalResults HistoricalResult[]
+}
+
+model Candidate {
+  id             String       @id @default(uuid())
+  name           String
+  partyId        String
+  party          Party        @relation(fields: [partyId], references: [id])
+  constituencyId String
+  constituency   Constituency @relation(fields: [constituencyId], references: [id])
+  photoUrl       String?
+  results        Result[]
+}
+
+model Result {
+  id             String       @id @default(uuid())
+  candidateId    String
+  candidate      Candidate    @relation(fields: [candidateId], references: [id])
+  constituencyId String
+  constituency   Constituency @relation(fields: [constituencyId], references: [id])
+  votes          Int
+  status         String       @default("counting") // counting, declared
+  updatedAt      DateTime     @updatedAt
+}
+
+model Turnout {
+  id             String       @id @default(uuid())
+  constituencyId String       @unique
+  constituency   Constituency @relation(fields: [constituencyId], references: [id])
+  registered     Int
+  voted          Int
+  percentage     Float
+  updatedAt      DateTime     @updatedAt
+}
+
+model HistoricalResult {
+  id             String       @id @default(uuid())
+  electionId     String
+  election       Election    @relation(fields: [electionId], references: [id])
+  constituencyId String
+  constituency   Constituency @relation(fields: [constituencyId], references: [id])
+  electionYear   Int
+  candidateName  String
+  partyName      String
+  votes          Int
+}
+
+model AlertRule {
+  id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  conditionType String   // seat_flip, margin_threshold, turnout_drop, counting_complete
+  threshold     Float?
+  targetId      String?  // candidateId or constituencyId
+  active        Boolean  @default(true)
+  history       AlertHistory[]
+}
+
+model AlertHistory {
+  id          String    @id @default(uuid())
+  ruleId      String
+  rule        AlertRule @relation(fields: [ruleId], references: [id])
+  triggeredAt DateTime  @default(now())
+  message     String
+  severity    String    @default("info") // info, warning, critical
+}
+
+model Upload {
+  id            String   @id @default(uuid())
+  filename      String
+  uploadedBy    String
+  status        String   @default("pending") // pending, processing, completed, failed
+  rowsProcessed Int      @default(0)
+  errors        String?  // JSON string for error logs
+  createdAt     DateTime @default(now())
+}

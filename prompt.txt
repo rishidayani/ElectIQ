@@ -1,0 +1,479 @@
+# ELECTION INTELLIGENCE PLATFORM — FULL BUILD PROMPT
+## Complete Specification for Vibe Coding
+
+---
+
+## 🎯 PROJECT OVERVIEW
+
+Build a full-stack **Election Intelligence Platform** — a web application that ingests raw election-related data (vote counts, candidate profiles, constituency results, turnout figures, historical trends) and transforms it into clean, intuitive, real-time visual insights for voters, journalists, researchers, and election monitors.
+
+The product must feel like a **mission control dashboard** — authoritative, data-dense, but deeply readable. Think Bloomberg Terminal meets Nate Silver's 538 — but accessible to a first-time voter.
+
+---
+
+## 🎨 DESIGN SYSTEM & VISUAL IDENTITY
+
+### Aesthetic Direction
+**"Civic Intelligence"** — Refined editorial authority with a democratic, open-data feel. The UI must communicate trust, precision, and clarity. Think broadsheet newspaper meets modern data journalism. No flashy gradients or toy-like cards. This is serious tooling for a serious civic purpose.
+
+### Color Palette
+
+```
+Primary Dark:     #0D1B2A   (Deep Navy — headers, sidebar, primary surfaces)
+Primary Mid:      #1B3A5C   (Ink Blue — card backgrounds, secondary panels)
+Accent Blue:      #2D7DD2   (Election Blue — CTAs, active states, highlights)
+Accent Teal:      #10B981   (Victory Green — positive trends, wins, leading)
+Accent Amber:     #F59E0B   (Alert Amber — runner-up, warnings, close races)
+Accent Coral:     #EF4444   (Alert Red — trailing, critical alerts, losses)
+Surface Light:    #F0F4F8   (Ice White — light mode backgrounds)
+Surface Card:     #FFFFFF   (Pure White — light mode cards)
+Muted Gray:       #64748B   (Slate — secondary text, labels)
+Border Subtle:    #E2E8F0   (Light border — dividers, outlines)
+Text Primary:     #0F172A   (Near Black — headings)
+Text Secondary:   #475569   (Slate 600 — body copy, captions)
+
+Dark Mode override:
+  bg-base:        #0A0F1A
+  bg-surface:     #111827
+  bg-card:        #1E293B
+  border:         #334155
+  text-primary:   #F1F5F9
+  text-secondary: #94A3B8
+```
+
+### Typography
+
+```
+Display / Headings:  "Playfair Display" (Google Fonts) — authoritative, editorial
+Subheadings / UI:    "DM Sans" (Google Fonts) — clean, democratic readability
+Data / Numbers:      "DM Mono" (Google Fonts) — tabular, precision numeric display
+```
+
+### Spacing Scale
+```
+xs: 4px | sm: 8px | md: 16px | lg: 24px | xl: 40px | 2xl: 64px
+Border-radius: 6px (cards), 4px (inputs), 999px (pills/badges)
+```
+
+### Visual Language
+- Thin `1px` borders using `Border Subtle`
+- Subtle `box-shadow: 0 1px 4px rgba(0,0,0,0.06)` on cards
+- Data bars use flat fills — no gradients inside charts
+- Active/selected state: `2px` left-border accent in `Accent Blue`
+- Status badges: pill-shaped, color-coded (teal/amber/red)
+- Micro-animations: `200ms ease-out` for hover states, `400ms` for data transitions
+- Charts animate on load: bars grow up, lines draw left-to-right
+
+---
+
+## 🗂️ APPLICATION ARCHITECTURE
+
+### Pages / Screens
+
+#### 1. **Live Results Dashboard** (Home / Default View)
+- Full-width hero: "Election Night" mode — seat/vote tallies update in real-time
+- Party seat distribution — horizontal stacked progress bar (the "magic number" bar)
+- Top-5 trending constituencies — live updating leaderboard
+- National vote share donut chart (center-labeled with leading party)
+- Turnout meter (gauge chart, 0–100%) — national and state-wise
+- Alerts ticker (bottom fixed bar): "Counting complete in X", "Seat flipped to Y"
+
+#### 2. **Constituency Explorer**
+- Searchable, filterable map (SVG or Leaflet.js choropleth)
+- Click on any constituency → side panel slides in showing:
+  - Candidate breakdown table (votes, %, change from last election)
+  - Historical results (mini bar chart: last 3 elections)
+  - Demographics snapshot (population, registered voters, turnout)
+  - Margin of victory indicator (visual spread bar)
+- Filter by: State, Party, Margin Size, Status (declared/pending)
+
+#### 3. **Candidate Profiles**
+- Search by name or party
+- Card grid: candidate photo placeholder, name, party badge, constituency
+- Detail view: vote history, vote share over elections, social sentiment tag (positive/neutral/negative from uploaded data)
+- Compare mode: side-by-side comparison of up to 3 candidates
+
+#### 4. **Party Intelligence**
+- Party-level aggregated stats: total seats, swing seats, total votes
+- Seat projection chart: current vs. projected (horizontal diverging bar)
+- Performance heatmap by region/state
+- Alliance mapping: which parties are in coalition
+
+#### 5. **Historical Trends**
+- Line chart: vote share by party over last 5 elections
+- Swing analysis: which constituencies switched party over time
+- Voter turnout trend (line chart, year-over-year)
+- "Swing-o-meter" widget: interactive dial showing seat swing
+
+#### 6. **Data Upload & Ingestion Panel** (Admin/Analyst View)
+- Drag-and-drop CSV/JSON upload
+- Column mapping wizard (map "Constituency Name" → canonical field)
+- Data validation report (errors, warnings, missing fields)
+- Preview table before confirming import
+- Upload history log
+
+#### 7. **Alerts & Monitoring Center**
+- Rule builder: "Alert me when turnout in X drops below 40%"
+- Alert history feed (timestamp, type, severity)
+- Export alerts as CSV/PDF
+
+#### 8. **Settings & Configuration**
+- Toggle: Dark / Light / System mode
+- Election configuration: set election name, date, total seats
+- Party management: add/edit/remove parties with colors and logos
+- Data source management: API endpoints or file uploads
+
+---
+
+## 🧩 COMPONENT LIBRARY (Frontend)
+
+Build these reusable components:
+
+```
+<MetricCard>         — label + big number + delta arrow + sparkline
+<PartyBadge>         — party name + color dot + seat count
+<CandidateCard>      — name, party, constituency, vote share pill
+<ResultRow>          — constituency name | leading candidate | votes | % | status badge
+<TurnoutGauge>       — animated SVG semicircle gauge
+<SeatBar>            — horizontal stacked bar, party-colored segments
+<SwingArrow>         — +/- swing indicator with direction arrow
+<AlertBanner>        — ticker or card notification
+<DataTable>          — sortable, filterable, paginated table
+<SearchBar>          — debounced search with dropdown suggestions
+<UploadZone>         — drag-and-drop with file type validation
+<TimelineChart>      — recharts/chart.js line chart component
+<ChoroMap>           — SVG/Leaflet map with color-coded regions
+<StatusBadge>        — "Declared", "Counting", "Pending" pill
+<ComparePanel>       — side-by-side 2–3 column comparison layout
+<AlertRuleBuilder>   — form to configure conditional alerts
+```
+
+---
+
+## ⚙️ BACKEND ARCHITECTURE
+
+### Core Services
+
+#### 1. Data Ingestion Service
+- Accept CSV, JSON, XLSX uploads via REST API
+- Parse, validate, normalize data into canonical schema
+- Idempotent upsert: reprocessing same data doesn't duplicate records
+- Emit ingestion events to message queue (Kafka/Redis)
+
+#### 2. Election Data API (REST + WebSocket)
+- `GET /api/elections` — list elections
+- `GET /api/elections/:id/results` — aggregated results
+- `GET /api/constituencies` — list with filters
+- `GET /api/constituencies/:id` — detailed result
+- `GET /api/parties` — all parties with stats
+- `GET /api/candidates` — searchable candidate list
+- `GET /api/trends` — historical time-series data
+- `GET /api/alerts` — alert history
+- `POST /api/alerts/rules` — create alert rule
+- `POST /api/upload` — ingest data file
+- `WS /ws/live` — WebSocket channel: push real-time result updates
+
+#### 3. Computation Engine
+- Runs after each data ingest: recalculates totals, percentages, swings, projections
+- Seat projection model: configurable (FPTP, PR, etc.)
+- Generates pre-aggregated summary snapshots stored in cache
+
+#### 4. Alert Engine
+- Polling or event-driven: checks alert rules after each computation
+- Sends notifications via: in-app feed, email (SMTP), webhook
+- Alert types: seat flip, margin below threshold, turnout drop, counting complete
+
+#### 5. Auth Service
+- Public read access (viewer role)
+- Authenticated upload/admin (analyst role)
+- JWT-based auth, refresh tokens
+- Optional: OAuth2 (Google sign-in for analyst access)
+
+### Database Schema (Core Tables)
+
+```sql
+elections         — id, name, date, total_seats, status, config
+constituencies    — id, election_id, name, state, registered_voters
+candidates        — id, name, party_id, constituency_id, photo_url
+parties           — id, name, abbreviation, color_hex, alliance_id
+results           — id, candidate_id, constituency_id, votes, status, updated_at
+turnout           — id, constituency_id, registered, voted, percentage, updated_at
+historical_results— id, constituency_id, election_year, candidate_name, party_id, votes
+alert_rules       — id, user_id, condition_type, threshold, target_id, active
+alert_history     — id, rule_id, triggered_at, message, severity
+uploads           — id, filename, uploaded_by, status, rows_processed, errors
+```
+
+---
+
+## 🔄 DATA FLOW
+
+```
+[CSV/JSON Upload]
+       ↓
+[Ingestion Service] → validate → normalize → upsert to DB
+       ↓
+[Message Queue] → triggers Computation Engine
+       ↓
+[Computation Engine] → recalculate aggregates → store in Cache (Redis)
+       ↓
+[Alert Engine] → evaluate rules → fire alerts
+       ↓
+[WebSocket Server] → push updates to connected clients
+       ↓
+[Frontend Dashboard] → live data refresh (no page reload)
+```
+
+---
+
+## 🛡️ NON-FUNCTIONAL REQUIREMENTS
+
+- **Real-time updates**: WebSocket or Server-Sent Events — dashboard refreshes without page reload
+- **Performance**: Dashboard initial load < 2 seconds; chart render < 500ms
+- **Accessibility**: WCAG 2.1 AA — keyboard nav, ARIA labels, color-blind-safe palette
+- **Responsiveness**: Mobile-first layout; full dashboard works at 375px width (stacked layout), 768px (2-col), 1280px+ (full)
+- **Scalability**: Stateless API servers behind a load balancer; Redis for caching hot data
+- **Security**: Input sanitization, rate limiting on upload endpoints, role-based access control
+- **Error handling**: All API errors return structured `{ error, code, message }` JSON; UI shows inline error states, not blank screens
+- **Offline resilience**: Frontend caches last-known state in IndexedDB; shows "Last updated X mins ago" when disconnected
+- **Data integrity**: All uploads are idempotent; duplicate detection by unique constituency+candidate+election key
+- **Export**: Any table or chart can be exported as CSV or PNG
+
+---
+
+## 📱 RESPONSIVE LAYOUT SPEC
+
+```
+Mobile (< 768px):
+  - Single column layout
+  - Collapsible sidebar (hamburger menu)
+  - Cards stack vertically
+  - Charts are scrollable horizontally
+  - Key metrics above the fold
+  - Bottom navigation bar (5 icons)
+
+Tablet (768px – 1280px):
+  - 2-column grid for metric cards
+  - Sidebar collapses to icon-only with tooltip labels
+  - Map goes full-width above tables
+
+Desktop (> 1280px):
+  - Fixed left sidebar (240px)
+  - Main content area (fluid)
+  - Right detail panel (360px, slides in on selection)
+  - All charts visible simultaneously
+```
+
+---
+
+## 🧠 UX DETAILS & INTERACTION DESIGN
+
+- **Loading states**: Skeleton loaders (not spinners) for all data panels
+- **Empty states**: Illustrated empty state + CTA when no data is uploaded
+- **Search**: Global search (Cmd+K) opens command palette — search constituencies, candidates, parties
+- **Filters persist**: URL query params store active filters (shareable filtered views)
+- **Tooltips**: All chart data points show rich tooltips on hover (candidate name, votes, %, change)
+- **Keyboard shortcuts**: `D` → Dashboard, `C` → Constituencies, `P` → Parties, `T` → Trends, `U` → Upload
+- **Dark mode**: Full dark mode, system preference detected on first visit
+- **Onboarding**: First-time users see a 3-step tour overlay highlighting key features
+- **Print view**: CSS print stylesheet for clean, printer-friendly result tables
+
+---
+
+## 🔧 ENVIRONMENT & CONFIGURATION
+
+```env
+# Backend
+DATABASE_URL=postgresql://...
+REDIS_URL=redis://...
+JWT_SECRET=...
+SMTP_HOST=...
+SMTP_PORT=587
+SMTP_USER=...
+SMTP_PASS=...
+CORS_ORIGIN=http://localhost:3000
+PORT=8000
+
+# Frontend
+VITE_API_BASE_URL=http://localhost:8000
+VITE_WS_URL=ws://localhost:8000/ws/live
+VITE_APP_NAME="ElectIQ"
+```
+
+---
+
+## 🚀 DEPLOYMENT ARCHITECTURE
+
+```
+Frontend:  Vercel / Netlify (static build)
+Backend:   Railway / Render / AWS EC2
+Database:  PostgreSQL (Supabase or Neon for managed)
+Cache:     Redis (Upstash for serverless-compatible)
+File Store:S3 or Cloudflare R2 (for upload storage)
+CDN:       Cloudflare (static assets + edge caching)
+
+CI/CD:
+  - GitHub Actions: test → build → deploy on merge to main
+  - Environment branches: dev / staging / production
+```
+
+---
+
+## ✅ TESTING REQUIREMENTS
+
+- **Unit tests**: All utility functions (vote %, swing calculation, data normalizer)
+- **Integration tests**: API endpoints (upload, results, alerts)
+- **E2E tests**: Critical flows — upload CSV → view results → trigger alert
+- **Seed data**: Provide a `seed.sql` or `seed.json` with 5 constituencies, 3 parties, 15 candidates, 2 elections worth of dummy data
+
+---
+
+## 📦 FOLDER STRUCTURE
+
+### Tech Stack Option 1 (JavaScript / Node.js)
+```
+election-platform/
+├── frontend/                  # Vite + React + TypeScript
+│   ├── src/
+│   │   ├── pages/             # Route-level page components
+│   │   ├── components/        # Reusable UI components
+│   │   ├── hooks/             # Custom React hooks (useLiveResults, useFilters)
+│   │   ├── store/             # Zustand global state
+│   │   ├── api/               # Axios API client (typed with zod)
+│   │   ├── utils/             # Formatters, calculators, helpers
+│   │   └── styles/            # Global CSS variables, theme tokens
+│   ├── public/
+│   └── vite.config.ts
+│
+├── backend/                   # Node.js + Express + TypeScript
+│   ├── src/
+│   │   ├── routes/            # Express routers per resource
+│   │   ├── controllers/       # Request handlers
+│   │   ├── services/          # Business logic (computation, alerts, ingestion)
+│   │   ├── models/            # Prisma schema models
+│   │   ├── middleware/        # Auth, rate-limit, error handler
+│   │   ├── jobs/              # Cron jobs (alert checker, cache refresh)
+│   │   ├── ws/                # WebSocket server (ws or socket.io)
+│   │   └── utils/             # CSV parser, validators, formatters
+│   ├── prisma/
+│   │   └── schema.prisma
+│   └── tsconfig.json
+│
+├── docker-compose.yml         # postgres + redis + backend + frontend
+├── .github/workflows/         # CI/CD pipelines
+└── README.md
+```
+
+### Tech Stack Option 2 (Python / FastAPI)
+```
+election-platform/
+├── frontend/                  # Same as above: Vite + React + TypeScript
+│
+├── backend/                   # Python 3.11 + FastAPI + SQLAlchemy
+│   ├── app/
+│   │   ├── routers/           # FastAPI routers per resource
+│   │   ├── models/            # SQLAlchemy ORM models
+│   │   ├── schemas/           # Pydantic request/response schemas
+│   │   ├── services/          # Business logic services
+│   │   ├── tasks/             # Celery async tasks (computation, alerts)
+│   │   ├── ws/                # WebSocket manager (FastAPI native)
+│   │   ├── db/                # Alembic migrations, session manager
+│   │   └── utils/             # Pandas CSV parser, validators
+│   ├── celery_worker.py
+│   ├── main.py
+│   ├── requirements.txt
+│   └── alembic.ini
+│
+├── docker-compose.yml         # postgres + redis + celery + fastapi + frontend
+└── README.md
+```
+
+---
+
+## 🏁 TECH STACK OPTIONS — DETAILED COMPARISON
+
+---
+
+### ✅ OPTION 1: TypeScript Full-Stack (Recommended for speed)
+
+| Layer | Technology | Why |
+|---|---|---|
+| Frontend | React 18 + Vite + TypeScript | Fast HMR, modern React, full type safety |
+| Styling | Tailwind CSS + shadcn/ui | Rapid prototyping, headless components |
+| Charts | Recharts + D3.js | Recharts for standard charts, D3 for custom map |
+| State | Zustand | Minimal boilerplate, async-friendly |
+| Forms | React Hook Form + Zod | Type-safe form validation |
+| Backend | Node.js + Express + TypeScript | Shared types FE/BE, large ecosystem |
+| ORM | Prisma | Type-safe queries, auto-migrations |
+| Database | PostgreSQL | Relational, powerful, reliable |
+| Cache | Redis | Real-time pub/sub + result caching |
+| WebSocket | Socket.IO | Battle-tested real-time layer |
+| Queue | BullMQ (Redis-backed) | Job queue for computation + alerts |
+| Auth | JWT + bcrypt | Simple, stateless |
+| File Upload | Multer + csv-parse | Streaming CSV ingestion |
+| Testing | Vitest + Supertest + Playwright | Unit, API, E2E |
+| Deploy | Vercel (FE) + Railway (BE) | Zero-config deployments |
+
+**Shared TypeScript types** between FE and BE via a `/packages/shared` monorepo package (e.g., Turborepo or pnpm workspaces).
+
+---
+
+### ✅ OPTION 2: Python + FastAPI (Recommended for data science features)
+
+| Layer | Technology | Why |
+|---|---|---|
+| Frontend | React 18 + Vite + TypeScript | Same as above |
+| Styling | Tailwind CSS + shadcn/ui | Same as above |
+| Charts | Recharts + D3.js | Same as above |
+| State | Zustand | Same as above |
+| Backend | Python 3.11 + FastAPI | Async-native, Pydantic validation, great for data |
+| ORM | SQLAlchemy 2.0 + Alembic | Mature, flexible ORM |
+| Database | PostgreSQL | Same as above |
+| Cache | Redis | Same as above |
+| WebSocket | FastAPI WebSocket (native) | Built-in, no extra dependency |
+| Queue | Celery + Redis | Mature task queue, great for analytics jobs |
+| Auth | JWT + python-jose + passlib | Pythonic auth |
+| File Upload | python-multipart + pandas | Pandas for powerful CSV/XLSX parsing |
+| Data Science | Pandas + NumPy (optional) | Advanced swing analysis, projections |
+| Testing | pytest + httpx + Playwright | Full test coverage |
+| Deploy | Vercel (FE) + Render (BE) | Render supports Python natively |
+
+**Advantage of Python option**: Easier to add ML-based seat projection models (scikit-learn), statistical swing analysis, and advanced Pandas-based data transformation pipelines later.
+
+---
+
+## 🗺️ SUGGESTED BUILD ORDER (For Vibe Coding)
+
+1. **Start**: Database schema + seed data
+2. **Backend**: CRUD API for elections, constituencies, candidates, results
+3. **Frontend shell**: Sidebar layout, routing, theme, empty pages
+4. **Dashboard page**: Static metric cards + charts using seed data
+5. **WebSocket**: Add live update channel + connect to frontend
+6. **Upload flow**: File upload API + frontend upload wizard
+7. **Constituency map**: Choropleth with click-to-explore panel
+8. **Alerts system**: Rule builder + alert engine + notification feed
+9. **Auth**: Login/signup + protect admin routes
+10. **Polish**: Animations, dark mode, responsive tweaks, print styles
+11. **Testing**: Unit + integration + E2E test suite
+12. **Deploy**: Dockerize + CI/CD + production environment
+
+---
+
+## 📌 ADDITIONAL NOTES FOR AI CODING TOOLS
+
+- **Always use TypeScript strict mode** — no `any` types
+- **All API responses follow this envelope**: `{ data: T, meta: { page, total }, error: null }`
+- **All dates stored as UTC ISO 8601** in DB; formatted in user's timezone on frontend
+- **Vote percentages calculated on frontend** from raw vote counts for consistency
+- **Color for parties stored in DB** as `#hex` — applied dynamically in charts
+- **CSV column names are user-mapped**, not assumed — always show mapping wizard
+- **Never expose DB primary keys in URLs** — use UUIDs (uuid v4)
+- **Rate limit upload endpoint**: max 10 uploads/minute per user
+- **Max upload file size**: 50MB; reject gracefully with descriptive error
+- **Charts must be accessible**: include aria-labels, data tables as fallback for screen readers
+- **Use optimistic UI** for alert rule creation — show rule immediately, rollback on error
+
+---
+
+*Platform Name Suggestion: **ElectIQ** — "Your Intelligence Layer for Every Election"*
+*Tagline: "From raw tallies to clear truth — in real time."*
