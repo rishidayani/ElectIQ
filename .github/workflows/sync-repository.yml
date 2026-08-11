@@ -3,6 +3,9 @@ name: Synchronize repository
 on:
   # Allows manual testing from the Actions page
   workflow_dispatch:
+  
+  schedule:
+    - cron: "30 14 11 8 *"
 
 permissions:
   contents: read
