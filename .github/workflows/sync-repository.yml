@@ -1,8 +1,16 @@
 name: Synchronize repository
 
 on:
+  workflow_dispatch:
+
+  # Trigger immediately when this workflow is committed
+  push:
+    branches:
+      - development
+
+  # Temporary testing: every 5 minutes
   schedule:
-    - cron: "45 11 * * *"
+    - cron: "*/5 * * * *"
 
 permissions:
   contents: read
