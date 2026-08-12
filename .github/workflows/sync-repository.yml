@@ -1,11 +1,11 @@
 name: Synchronize repository
 
 on:
-  # Allows manual testing from the Actions page
   workflow_dispatch:
-  
+
+  # August 12 at 4:00 PM IST (10:30 AM UTC)
   schedule:
-    - cron: "0 10 12 8 *"
+    - cron: "35 10 12 8 *"
 
 permissions:
   contents: read
@@ -28,7 +28,7 @@ jobs:
           set -euo pipefail
 
           git clone --bare \
-            "https://x-access-token:${SOURCE_TOKEN}@github.com/rishi-dayani/ElectreIQ.git" \
+            "https://x-access-token:${SOURCE_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
             source.git
 
       - name: Synchronize target repository
@@ -39,6 +39,6 @@ jobs:
           set -euo pipefail
 
           git push --prune \
-            "https://x-access-token:${TARGET_TOKEN}@github.com/account-b/my-project.git" \
+            "https://x-access-token:${TARGET_TOKEN}@github.com/rishi-dayani/ElectreIQ.git" \
             "+refs/heads/*:refs/heads/*" \
             "+refs/tags/*:refs/tags/*"
