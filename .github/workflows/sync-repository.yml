@@ -1,9 +1,8 @@
 name: Synchronize repository
 
 on:
-  # Automatically runs every day at 4:42 PM IST
   schedule:
-    - cron: "12 11 * * *"
+    - cron: "45 11 * * *"
 
 permissions:
   contents: read
