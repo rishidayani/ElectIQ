@@ -1,11 +1,9 @@
 name: Synchronize repository
 
 on:
-  workflow_dispatch:
-
-  # August 12 at 4:00 PM IST (10:30 AM UTC)
+  # Automatically runs every day at 4:42 PM IST
   schedule:
-    - cron: "35 10 12 8 *"
+    - cron: "12 11 * * *"
 
 permissions:
   contents: read
@@ -38,7 +36,12 @@ jobs:
         run: |
           set -euo pipefail
 
+          if [ -z "${TARGET_TOKEN}" ]; then
+            echo "TARGET_TOKEN secret is missing or empty."
+            exit 1
+          fi
+
           git push --prune \
-            "https://x-access-token:${TARGET_TOKEN}@github.com/rishi-dayani/ElectreIQ.git" \
+            "https://rishi-dayani:${TARGET_TOKEN}@github.com/rishi-dayani/ElectreIQ.git" \
             "+refs/heads/*:refs/heads/*" \
             "+refs/tags/*:refs/tags/*"
